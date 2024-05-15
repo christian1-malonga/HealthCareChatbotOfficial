@@ -16,15 +16,14 @@ messages = []
 
 user_profiles = {}
 app = Flask(__name__, template_folder='templates')
-client = OpenAI(api_key="sk-proj-5rmX44MiNWqdfDe9ZmVtT3BlbkFJjc1GbCRZOG3cVaLiCRQS")
-openai.api_key ="sk-proj-5rmX44MiNWqdfDe9ZmVtT3BlbkFJjc1GbCRZOG3cVaLiCRQS" # os.getenv("OPEN_API_KEY")
+openai.api_key = os.getenv("API_KEY")
 
 
 print(openai.api_key)
 
 
 def getApIresponse(input_text):
-    openai.api_key ="sk-proj-5rmX44MiNWqdfDe9ZmVtT3BlbkFJjc1GbCRZOG3cVaLiCRQS"
+    openai.api_key = os.getenv("API_KEY")
     messages.append({"role": "user", "content": input_text})
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo-1106",
