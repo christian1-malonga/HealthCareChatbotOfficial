@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+    body {
+            font-family: 'Merriweather', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #eff3f6;
+            margin: 0; /* Remove default margin */
+        }
+
+        .chat-container {
+            width: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            height: 200vh;
+            max-height: 70vh ;
+            margin: 10px;
+            /* Set a fixed height */
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(to right, #041930, #395f88);
+            color: #fff;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .chatbot-logo {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .chat-header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: calc(100% - 110px); /* Adjusted max-height */
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message-text {
+            font-size: 1rem;
+        }
+
+        .chat-input-container {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            border-top: 1px solid #ddd;
+            align-items: center;
+        }
+
+        #chat-input {
+          flex: 1;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+        }
+
+        #voice-assistant-btn{
+           width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #031d39;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        #voice-assistant-btn:hover{
+            background-color: #10365e;
+        }
+
+
+        .knowledge-question {
+            font-size: 0.9rem;
+            font-weight: normal;
+            margin-bottom: 5px;
+            font-family: 'Merriweather', sans-serif;
+        }
+
+        .knowledge-level-select {
+            margin-bottom: 5px;
+            width:calc(100% - 20px) ;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgb(16, 54, 94);
+        }
+
+        .chat-input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+        }
+
+        .send-button {
+            padding: 10px;
+            background-color: #031d39;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .send-button:hover {
+            background-color: #395f88;
+        }
+
+        .Feedback-Section {
+            font-size: 0.9rem;
+            font-weight: normal;
+            margin-bottom: 5px;
+            font-family: 'Merriweather', sans-serif;
+            display: none;
+
+        }
+
+        .feedback-select-container {
+            display: none;
+        }
+
+        .Feedback-select {
+            margin-bottom: 5px;
+            width:calc(100% - 20px) ;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="https://media.licdn.com/dms/image/D4E12AQHHZl1bcarTfw/article-cover_image-shrink_720_1280/0/1708898008844?e=1721260800&v=beta&t=bOhO4IvLuzccAEiJ2Wa5CaKqxTHy5VVM2ESeSpBiPdY" alt="Chatbot Logo" class="chatbot-logo">
+            <div class="chat-header-info">
+                <div class="chat-header-title">Doğa AI</div>
+                <div class="message-text">hello, How can I help you today?</div>
+            </div>
+        </div>
+        <div class="knowledge-question">Your knowledge level:</div>
+        <div class="knowledge-level-select-container">
+            <label for="knowledge-level"></label><select id="knowledge-level" class="knowledge-level-select">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+        </div>
+        <div class="chat-history" id="chat-history">
+            <!-- Chat messages will be added here dynamically -->
+        </div>
+
+
+
+        <div class="Feedback-Section" id="Feedback-section">How was the Response?</div>
+        <div class="feedback-select-container">
+            <label for="Feedback"></label><select class="Feedback-select" id="Feedback">
+                <option value="easy">Easy</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Hard</option>
+            </select>
+        </div>
+        <div class="chat-input-container">
+            <div class="input-container">
+                <label for="chat-input"></label><input type="text" id="chat-input" class="chat-input" placeholder="Enter your prompt here...">
+                <button id="voice-assistant-btn" class="voice-assistant-btn" onclick="function startVoiceAssistant() {
+
+                }
+                startVoiceAssistant()">🎙</button>
+            </div>
+            <button id="send-button" class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function ()
+        {
+            // Store chat history in an array
+            let chatHistoryArray = [];
+
+            document.getElementById('send-button').addEventListener('click', function (event) {
+                event.preventDefault();
+                sendMessage();
+            });
+
+            document.getElementById('chat-input').addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+            function showFeedbackSection() {
+                const feedbackSection = document.getElementById('Feedback-section');
+                const feedbackSelectContainer = document.querySelector('.feedback-select-container');
+
+                setTimeout(function () {
+                    feedbackSection.style.display = 'flex';
+                    feedbackSelectContainer.style.display = 'block';
+                }, 20000);
+            }
+            function showLoadingMessage() {
+                const chatHistory = document.getElementById('chat-history');
+                const loadingMessage = createMessageElement('bot-message', 'Typing...');
+                chatHistory.appendChild(loadingMessage);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+
+            function hideLoadingMessage() {
+                const chatHistory = document.getElementById('chat-history');
+                const loadingMessages = chatHistory.getElementsByClassName('bot-message');
+
+                // Remove only the last 'Typing...' message
+                if (loadingMessages.length > 0 && loadingMessages[loadingMessages.length - 1].textContent === 'Typing...') {
+                    loadingMessages[loadingMessages.length - 1].remove();
+                }
+            }
+
+            function sendMessage() {
+                const input = document.getElementById('chat-input');
+                const messageText = input.value.trim();
+
+                if (messageText !== '') {
+                    document.getElementById('chat-history');
+
+                    // Show the loading message before making the fetch request
+                    showLoadingMessage();
+
+                    // Send the user's message to the server and get the bot's response
+                    fetch('/chatbot', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `message=${encodeURIComponent(messageText)}&knowledge_level=beginner&user_id=someUserId`,
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Remove the loading message before adding the actual bot response
+                            hideLoadingMessage();
+
+                            // Use the actual response from the server
+                            const botResponse = data.output;
+
+                            // Add both user's input and bot's response to chat history letter by letter
+                            typeMessage(messageText, 'user-message');
+                            requestAnimationFrame(function () {
+                                typeMessage(botResponse, 'bot-message');
+                                requestAnimationFrame(showFeedbackSection, 500); // Show the feedback select container after bot generates a response
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error sending message to server:', error);
+                        })
+                        .finally(() => {
+                            input.value = ''; // Clear the input field
+                            // Store chat history in a hidden element (for example, with id 'chat-history-container')
+                            document.getElementById('chat-history-container').innerHTML = chatHistoryArray.join('');
+                        });
+                }
+            }
+
+            function typeMessage(text, messageType) {
+                const chatHistory = document.getElementById('chat-history');
+                const messageElement = createMessageElement(messageType, '');
+                chatHistory.appendChild(messageElement);
+                const messageTextElement = document.createElement('div');
+
+                messageTextElement.classList.add('message-text');
+
+                messageElement.appendChild(messageTextElement);
+
+
+                let index = 0;
+
+
+                function addLetter() {
+
+                    messageTextElement.textContent += text[index];
+
+                    index++;
+
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+
+                    if (index < text.length) {
+
+                        setTimeout(addLetter, 50); // Adjust the delay between letters if needed
+
+                    }
+                }
+
+                addLetter();
+            }
+
+            function createMessageElement(type, text) {
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add(type);
+
+                const messageTextElement = document.createElement('div');
+                messageTextElement.classList.add('message-text');
+                messageTextElement.textContent = text;
+
+                message.appendChild(messageTextElement);
+
+                return message;
+            }
+
+        }
+
+    );
+</script>
+
+</body>
+</html>
